@@ -18,8 +18,9 @@
         whereexp=$exp_root
         whereobs=$obs_root
 
-        exp_old=ufs_b31
-        exp_new=ufs_p4_pre
+        exp_old=ufs_p4_pre
+        exp_new=ufs_p4_uncoupled
+
         res=1p00
 
     # Other specitications
@@ -28,19 +29,21 @@
         nplots=9      #valid choices are 9 or 3  
         mapscript=map_compare_obs.sh    
         hardcopy=no         # Valid choices are yes no      
-        domain=Global       # Valid choices see [case "$domain" list] in mapping script
+        domain=Global50       # Valid choices see [case "$domain" list] in mapping script
                             # NB: keep in mind that verifying obs for tmpsfc (OSTIA SST) are not valid for ice-covered areas because tmpsfc there is not sst
         
-        declare -a varlist=( "t2min" "tmpsfc" )            # Valid choices for comparison with OBS are "tmpsfc" "prate" "ulwrftoa" "tmp2m" "t2min" "t2max" 
-        declare -a seasonlist=( "DJF" "JJA" )     # Valid choices are "DJF" "MAM" "JJA" "SON" "AllAvailable"
+        declare -a varlist=( "prate" "t2min" "tmpsfc" "tmp2m" )            # Valid choices for comparison with OBS are "tmpsfc" "prate" "ulwrftoa" "tmp2m" "t2min" "t2max" 
+        declare -a seasonlist=( "MAM" )     # Valid choices are "DJF" "MAM" "JJA" "SON" "AllAvailable"
 
 
         for season in ${seasonlist[@]} ; do
         for varname in ${varlist[@]}; do
 
-        for day in 1  ; do
-            echo "using $mapscript"
-            bash $mapscript whereexp=$whereexp  whereobs=$whereobs varModel=$varname domain=$domain hardcopy=$hardcopy season=$season nameModelA=$exp_old nameModelB=$exp_new ystart=$ystart yend=$yend ystep=$ystep  mstart=$mstart mend=$mend mstep=$mstep dstart=$dstart dend=$dend dstep=$dstep d1=$day d2=$day  nplots=$nplots
+        for day in 13  ; do
+            day1=$day
+            day2=$((day+14))
+            echo "using $mapscript $day1 to $day2 for $varname"
+            bash $mapscript whereexp=$whereexp  whereobs=$whereobs varModel=$varname domain=$domain hardcopy=$hardcopy season=$season nameModelA=$exp_old nameModelB=$exp_new ystart=$ystart yend=$yend ystep=$ystep  mstart=$mstart mend=$mend mstep=$mstep dstart=$dstart dend=$dend dstep=$dstep d1=$day1 d2=$day2  nplots=$nplots
    done
 done
 done

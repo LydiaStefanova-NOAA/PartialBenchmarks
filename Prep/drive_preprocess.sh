@@ -14,14 +14,14 @@
 
     # Name and location of experiment output on HPSS
 
-        exp_new=ufs_b33
+        exp_new=ufs_p4_uncoupled
         upload_root=/scratch1/NCEPDEV/stmp2/Lydia.B.Stefanova/fromHPSS/                # store uploaded data here
         exp_root=/scratch2/NCEPDEV/climate/Lydia.B.Stefanova/Models/
         res=1p00                                                                       # currently the only resolution implemented
 
     # Specify list of variables to preprocess (turn from 6-hourly grib2 into a 35-day series of daily netcdf)
 
-        declare -a varlist=( "icetk" ) 
+        declare -a varlist=( "land" "tmpsfc" "tmp2m" "t2min" "t2max" "icetk" "icec" "ulwrftoa" "prate" ) 
 
     # The plotting scripts are prepared to handle variables on the list below:
 

@@ -65,11 +65,10 @@ esac
        fi
        if [ "$varModel" == "t2m_fromminmax" ] ; then
           ncvarModel="t2m_fromminmax"; multModel=1.; offsetModel=0.; units="deg K";mask="landonly"
-          nameObs="era5";  varObs="t2m"; ncvarObs="TMP_2maboveground"; multObs=1.; offsetObs=0.
           nameObs="t2m_from_minmax_CPC";  varObs="t2m_CPC"; ncvarObs="t2m"; multObs=1.; offsetObs=273.15
        fi
        if [ "$varModel" == "tmp2m" ] ; then
-          ncvarModel="TMP_2maboveground"; multModel=1.; offsetModel=0.; units="deg K";mask="landonly"
+          ncvarModel="TMP_2maboveground"; multModel=1.; offsetModel=0.; units="deg K";#mask="landonly"
           nameObs="era5";  varObs="t2m"; ncvarObs="TMP_2maboveground"; multObs=1.; offsetObs=0.
        fi
        if [ "$varModel" == "tmpsfc" ] ; then
@@ -446,13 +445,3 @@ cat << EOF > $nclscript
 EOF
 
 ncl bias_${season}.ncl
-
-
-
-
-EOF
-
-ncl bias_${season}.ncl
-
-
-
