@@ -62,15 +62,16 @@ begin
       res2@cnLevelSelectionMode = "ExplicitLevels"   ; set explicit contour levels
       res2@cnLevels             = (/ -40., -20., -10.,-5.,-2., 2. ,5. ,10. ,20. , 40./)   ; set levels
   end if
-  if (isStrSubset(varname,"tmpsfc").or.isStrSubset(varname,"t2m")) then
+  if (isStrSubset(varname,"tmp").or.isStrSubset(varname,"t2m")) then
       ;res0@cnMinLevelValF  = 220.
       ;res0@cnMaxLevelValF  = 310.
       ;res0@cnLevelSpacingF  = 10.
 
       res0@cnFillPalette        = "wgne15"
       res0@cnLevelSelectionMode = "ExplicitLevels"   ; set explicit contour levels
-      res@cnFillColors=         (/8,  2,  3,  4,  5,   14, 15,10,11 /) 
+      res@cnFillColors=         (/7,8,  2,  3,  4,  5,   14, 15,10,11,12 /) 
       res0@cnLevels     := (/230,240,250,260,270,280,290,300,310/)   ; set levels
+      res0@cnLevels     := (/260,265,270,275,280,285,290,295,300,305,310/)   ; set levels
 
 
       ;res1@cnFillPalette        = "temp_diff_18lev"

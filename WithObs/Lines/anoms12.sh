@@ -42,7 +42,7 @@ done
 
 case "$domain" in 
     "Global") latS="-90"; latN="90" ;  lonW="0" ; lonE="360" ;;
-    "Nino3.4") latS="-5"; latN="5" ;  lonW="190" ; lonE="240" ;;
+    "Nino34") latS="-5"; latN="5" ;  lonW="190" ; lonE="240" ;;
     "GlobalTropics") latS="-30"; latN="30" ;  lonW="0" ; lonE="360" ;;
     "Global20") latS="-20"; latN="20" ;  lonW="0" ; lonE="360" ;;
     "Global50") latS="-50"; latN="50" ;  lonW="0" ; lonE="360" ;;
@@ -62,7 +62,7 @@ esac
           nameObs="t2max_CPC";  varObs="tmax"; ncvarObs="tmax"; multObs=1.; offsetObs=273.15
        fi
        if [ "$varModel" == "tmp2m" ] ; then
-          ncvarModel="TMP_2maboveground"; multModel=1.; offsetModel=0.; units="deg K";mask="landonly"
+          ncvarModel="TMP_2maboveground"; multModel=1.; offsetModel=0.; units="deg K"
           nameObs="era5";  varObs="t2m"; ncvarObs="TMP_2maboveground"; multObs=1.; offsetObs=0.
        fi
        if [ "$varModel" == "t2m_fromminmax" ] ; then
@@ -196,7 +196,7 @@ esac
 
    LENGTHm1="$(($LENGTH-1))"                          # Needed for counters starting at 0
    s1=0; s2=$LENGTHm1                                 # Glom together all ICs
-   d1=0; d2=34                                        # from day=d1 to day=d1 (counter starting at 0)
+   d1=0; d2=28                                        # from day=d1 to day=d1 (counter starting at 0)
    d1p1="$(($d1+1))"                                  # day1 (counter starting at 1)
    d2p1="$(($d2+1))"                                  # day2 (counter starting at 1)
 
@@ -281,6 +281,22 @@ cat << EOF > $nclscript
      end if 
   end if
 
+;--- Provision for one of the models being a shorter run 
+
+  dimsA=dimsizes(${nameModelA}_fld)
+  dimsB=dimsizes(${nameModelB}_fld)
+  dimsTA=dimsA(1)
+  dimsTB=dimsB(1)
+  if (dimsTA.lt.dimsTB) then
+     dimsT=dimsTA
+     else
+       dimsT=dimsTB
+  end if
+  print(dimsT)
+  ${nameModelA}_fld := ${nameModelA}_fld(:,0:dimsT-1,:,:) 
+  ${nameModelB}_fld := ${nameModelB}_fld(:,0:dimsT-1,:,:) 
+  ${nameObs}_fld := ${nameObs}_fld(:,0:dimsT-1,:,:)
+
 ;---Adjust scaling and offset  
 
   ${nameModelA}_fld=${nameModelA}_fld*${multModel} + 1.*($offsetModel)
@@ -302,6 +318,9 @@ cat << EOF > $nclscript
   end if 
   ${nameModelA}_fld=where(.not.ismissing(${nameObs}_fld),${nameModelA}_fld,${nameModelA}_fld@_FillValue)
   ${nameModelB}_fld=where(.not.ismissing(${nameObs}_fld),${nameModelB}_fld,${nameModelB}_fld@_FillValue)
+  print(num(.not.ismissing(${nameModelA}_fld)))
+  print(num(.not.ismissing(${nameModelB}_fld)))
+  print(num(.not.ismissing(${nameObs}_fld)))
 
 ;---Specify dimensions of lat/lon as specified in $domain
 
@@ -489,28 +508,28 @@ cat << EOF > $nclscript
   data0(2,:)=${nameObs}_aave
   data0@long_name="Area mean, " + "$units"
   data0@units="$units"
-  plot(0)=gsn_csm_xy(wks,ispan(1,35,1),data0(:,0:34),res0)
+  plot(0)=gsn_csm_xy(wks,ispan(1,dimsT,1),data0(:,0:dimsT-1),res0)
 
   data1=new((/3,dimsizes(${nameModelA}_aave&time)/),float)
   data1(0,:)=${nameModelA0}_aave
   data1(1,:)=${nameModelB0}_aave
   data1@long_name="Area mean Bias, " + "$units"
   data1@units="$units"
-  plot(1)=gsn_csm_xy(wks,ispan(1,35,1),data1(:,0:34),res1)
+  plot(1)=gsn_csm_xy(wks,ispan(1,dimsT,1),data1(:,0:dimsT-1),res1)
 
   data2=new((/3,dimsizes(${nameModelA}_aave&time)/),float)
   data2(0,:)=${nameModelA}_rmse
   data2(1,:)=${nameModelB}_rmse
   data2@long_name="Raw RMSE, " + "$units"
   data2@units="$units"
-  plot(2)=gsn_csm_xy(wks,ispan(1,35,1),data2(:,0:34),res2)
+  plot(2)=gsn_csm_xy(wks,ispan(1,dimsT,1),data2(:,0:dimsT-1),res2)
 
   data3=new((/3,dimsizes(${nameModelA}_aave&time)/),float)
   data3(0,:)=${nameModelA}_anomrmse
   data3(1,:)=${nameModelB}_anomrmse
   data3@long_name="Bias-corrected RMSE, "  + "$units"
   data3@units="$units"
-  plot(3)=gsn_csm_xy(wks,ispan(1,35,1),data3(:,0:34),res2)
+  plot(3)=gsn_csm_xy(wks,ispan(1,dimsT,1),data3(:,0:dimsT-1),res2)
 
   panelopts                   = True
   panelopts@gsnPanelMainString = "$domain, $mask, ${varModel}, $season, ${ystart}-${yend}, $truelength ICs"
