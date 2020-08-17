@@ -14,7 +14,7 @@
     # Name and location of experiment and obs (data as 35-day time series in netcdf)
 
         obs_root=/scratch2/NCEPDEV/climate/Lydia.B.Stefanova/ReferenceData/    # Location of OBS: changing it is not recommended
-        exp_root=/scratch2/NCEPDEV/climate/Lydia.B.Stefanova/Models/            # Location of OBS: changing it is not recommended
+        exp_root=/scratch2/NCEPDEV/climate/Lydia.B.Stefanova/Models/           # Location of Experiments (both exp_new/exp_old expected here)
         whereexp=$exp_root
         whereobs=$obs_root
 
